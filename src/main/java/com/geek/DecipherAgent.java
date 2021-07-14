@@ -19,7 +19,7 @@ public class DecipherAgent {
             return ThronesConstants.NONE;
 
         String kingdom = words.get(0).toUpperCase();
-        List<Character> decipheredChars = decipherMessage(words.get(1).strip().toLowerCase(),
+        List<String> decipheredChars = decipherMessage(words.get(1).strip().toLowerCase(),
                 ThronesConstants.kingdomEmblem.get(words.get(0).toUpperCase()).length());
 
         return decipherMessage(kingdom, decipheredChars);
@@ -33,7 +33,7 @@ public class DecipherAgent {
      * @param shift Key to be used for process
      * @return deciphered message
      */
-    private List<Character> decipherMessage(String word, int shift) {
+    private List<String> decipherMessage(String word, int shift) {
 
         char[] alphabetsChar =
                 IntStream.rangeClosed('a', 'z')
@@ -51,7 +51,7 @@ public class DecipherAgent {
                                     : indexOfChar;
 
                             alphabet = alphabetsChar[indexOfChar];
-                            return alphabet;
+                            return alphabet.toString();
                         }
                 ).collect(Collectors.toList());
 
@@ -65,7 +65,7 @@ public class DecipherAgent {
      * @param decipheredChars Deciphered message
      * @return Returns Kingdom name for valid case.
      */
-    private String decipherMessage(String kingdom, List<Character> decipheredChars) {
+    private String decipherMessage(String kingdom, List<String> decipheredChars) {
         switch (kingdom) {
             case "LAND": {
                 return checkForEmblemChars(decipheredChars, ThronesConstants.kingdomEmblem.get("LAND"))
@@ -105,7 +105,7 @@ public class DecipherAgent {
      * @param emblem
      * @return
      */
-    private boolean checkForEmblemChars(List<Character> decipheredChars, String emblem) {
+    private boolean checkForEmblemChars(List<String> decipheredChars, String emblem) {
         try {
             List<Character> emblemChars =
                     emblem.toLowerCase()
@@ -119,18 +119,12 @@ public class DecipherAgent {
                             .stream()
                             .collect(groupingBy(e -> e.toString(), Collectors.counting()));
 
-            // Convert Char to String
-            List<String> stringCharacters =
-                    decipheredChars
-                            .stream()
-                            .map(l->l.toString())
-                            .collect(Collectors.toList());
 
             for (Map.Entry entry : emblemCharCountMap.entrySet()) {
-                if (!stringCharacters.contains(entry.getKey()))
+                if (!decipheredChars.contains(entry.getKey()))
                     return false;
                 else {
-                    Long count = stringCharacters
+                    Long count = decipheredChars
                             .stream()
                             .filter(foundChar -> entry.getKey().equals(foundChar))
                             .count();
